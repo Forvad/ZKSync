@@ -65,10 +65,12 @@ class Mute:
         tx_bool = EVM.sending_tx(web3, contract_txn, 'zksync', self.private_key, self.retry, module_str,
                                  add_buy=add_buy, sell_add=sell_add)
         if not tx_bool:
-            if RETRY < self.retry:
+            if RETRY > self.retry:
                 self.retry += 1
                 time.sleep(15)
                 return self.swap()
+        else:
+            return True
 
     def add_liquidity(self):
         module_str = 'Add Liquidity Mute'
