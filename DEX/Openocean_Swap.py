@@ -27,7 +27,7 @@ class Openocean:
         from_token_address = self.token_address(self.token_from)
         token_to_buy = self.token_address(self.token_to)
         url = f'https://open-api.openocean.finance/v3/324/swap_quote?inTokenAddress={from_token_address.lower()}&' \
-              f'outTokenAddress={token_to_buy.lower()}&account={"0xDbde3A019589F121eBFd68cFCBa6f70becD76CC5".lower()}' \
+              f'outTokenAddress={token_to_buy.lower()}&account={wallet.lower()}' \
               f'&amount={self.amount}&gasPrice=5&slippage=3'
         response = requests.get(url=url)
         json_data = response.json()
