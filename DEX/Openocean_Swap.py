@@ -3,6 +3,7 @@ import time
 import requests
 from Utils.EVMutils import EVM, Web3
 from config import RETRY
+from Log.Loging import inv_log
 
 
 class Openocean:
@@ -26,12 +27,21 @@ class Openocean:
         wallet = web3.eth.account.from_key(self.private_key).address
         from_token_address = self.token_address(self.token_from)
         token_to_buy = self.token_address(self.token_to)
-        url = f'https://open-api.openocean.finance/v3/324/swap_quote?inTokenAddress={from_token_address.lower()}&' \
-              f'outTokenAddress={token_to_buy.lower()}&account={wallet.lower()}' \
-              f'&amount={self.amount}&gasPrice=5&slippage=3'
-        response = requests.get(url=url)
-        json_data = response.json()
-        value = int(json_data['data']['value'])
+
+        def req():
+            url = f'https://open-api.openocean.finance/v3/324/swap_quote?inTokenAddress={from_token_address.lower()}&' \
+                  f'outTokenAddress={token_to_buy.lower()}&account={wallet.lower()}' \
+                  f'&amount={self.amount}&gasPrice=5&slippage=3'
+            response = requests.get(url=url)
+            json_data = response.json()
+            value = int(json_data['data']['value'])
+            return value, json_data
+        while True:
+            try:
+                value, json_data = req()
+                break
+            except BaseException:
+                inv_log().error(f'openocean error request')
         if self.token_from != "ETH":
             decimal, _ = EVM.decimal_token('zksync', from_token_address)
             EVM.approve(EVM.DecimalFrom(self.amount, decimal),
