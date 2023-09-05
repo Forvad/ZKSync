@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "zksynk"
+version = "0.1.0"
+description = ""
+authors = ["Forvard <ficaliighvdrb@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+web3 = "^6.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
