@@ -33,6 +33,8 @@ class Mute:
                                                       [False, True]).call()[1]
         min_tokens = int(amount_out * (1 - (1 / 100)))
         if self.token_from != "ETH":
+            EVM.approve(value, self.private_key, "zksync", self.token_address(self.token_from),
+                        "0x8B791913eB07C32779a16750e3868aA8495F5964")
             contract_txn = contract.functions.swapExactTokensForETHSupportingFeeOnTransferTokens(
                 value,
                 min_tokens,
@@ -56,9 +58,6 @@ class Mute:
             'nonce': web3.eth.get_transaction_count(wallet),
             "gas": 0
         })
-        if self.token_from != "ETH":
-            EVM.approve(value, self.private_key, "zksync", self.token_address(self.token_from),
-                        "0x8B791913eB07C32779a16750e3868aA8495F5964")
         module_str = f'Mute Swap | {wallet} | {self.token_from} | {self.token_to}'
         add_buy = value if self.token_to == 'ETH' else 0
         sell_add = value if self.token_from == 'ETH' else 0
