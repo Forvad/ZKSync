@@ -211,10 +211,6 @@ class EVM:
     @staticmethod
     def sending_tx(web3: Web3, contract_txn: dict, chain: str, private_key: str,  retry: int, module_str: str,
                    add_buy=0, sell_add=0, numb=None):
-        add_fee = AddFee()
-        add_fee.balance_from, _ = EVM.check_balance(private_key, chain, '')
-        add_fee.trade_sell = sell_add
-        add_fee.trade_buy = add_buy
         wallet = contract_txn["from"]
         contract_txn = EVM.add_gas(web3, contract_txn)
         if not contract_txn:
@@ -238,18 +234,12 @@ class EVM:
             log(numb).info(module_str)
             log().success(tx_link)
             time.sleep(2)
-            add_fee.balance_to, _ = EVM.check_balance(private_key, chain, '')
-            DB = DateBase()
-            DB.add_data_balance(wallet, str(add_fee.fee_print()))
-            log().info(f" fee network -> {add_fee.fee_print()} $")
             return True
 
         elif status == 2:
             log().info('Нет ответа, думаем что прошло')
             log().info(module_str)
             log().success(tx_link)
-            add_fee.balance_to, _ = EVM.check_balance(private_key, "zksync", '')
-            log().info(add_fee.fee_print())
             return True
         else:
             log().error(f'{module_str} | tx is failed')
