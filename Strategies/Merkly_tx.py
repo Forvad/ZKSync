@@ -26,6 +26,7 @@ class MerklyTx:
         if not networks:
             return False
         work_network = ['zksync']
+        MerklyBridge.check_merkly_fees()
         to_network = self.to_chain_merkly()
         amount_work = EVM.randint_(TX_MERKLY)
         for _ in range(amount_work):
