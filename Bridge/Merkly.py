@@ -61,7 +61,6 @@ class MerklyBridge:
                                                                         '0x', adapterParams).call()
                         send_value = EVM.DecimalTO(send_value[0], 18)
                         send_value = round_to(send_value * EVM.prices_network(from_chain))
-                        log().info(f'{send_value} / {to_chain}')
                         if send_value < 0.2:
                             result[from_chain].append(to_chain)
                     except Exception:
