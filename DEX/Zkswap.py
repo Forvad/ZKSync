@@ -32,6 +32,8 @@ class ZkSwap:
                                                               self.token_address(self.token_to)]).call()[1]
         min_tokens = int(amount_out * (1 - (1 / 100)))
         if self.token_from != "ETH":
+            EVM.approve(value, self.private_key, "zksync", self.token_address(self.token_from),
+                        "0x18381c0f738146Fb694DE18D1106BdE2BE040Fa4")
             contract_txn = contract.functions.swapExactTokensForETH(
                 value,
                 min_tokens,
@@ -53,9 +55,6 @@ class ZkSwap:
             'nonce': web3.eth.get_transaction_count(wallet),
             "gas": 0
         })
-        if self.token_from != "ETH":
-            EVM.approve(value, self.private_key, "zksync", self.token_address(self.token_from),
-                        "0x18381c0f738146Fb694DE18D1106BdE2BE040Fa4")
         module_str = f'ZkSwap | {wallet} | {self.token_from} | {self.token_to}'
         add_buy = value if self.token_to == 'ETH' else 0
         sell_add = value if self.token_from == 'ETH' else 0

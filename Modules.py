@@ -1,4 +1,4 @@
-from Info.wenser import get_info
+from Info.Checker import get_info
 
 
 def wallet() -> list:
