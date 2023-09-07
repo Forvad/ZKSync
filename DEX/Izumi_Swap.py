@@ -41,7 +41,7 @@ class Izumi:
             mode = "000190"
         data = '0x75ceafe600000000000000000000000000000000000000000000000000000000000000200000000000000000000000000' \
                '0000000000000000000000000000000000000a0' + encode(['address', 'uint128', 'uint256', 'uint256'],
-                                                                  ["0xDbde3A019589F121eBFd68cFCBa6f70becD76CC5",
+                                                                  [wallet,
                  value,
                  min_value,
                  int(time.time()) + 10000]).hex() + f"000000000000000000000000000000000000000000000000000000000000002b" \
@@ -57,7 +57,7 @@ class Izumi:
         if self.token_from != "ETH" and self.token_to != "ETH":
             contract_txn = contract.functions.swapAmount(
                 (f"{self.token_address(self.token_from)}000190{self.token_address(self.token_to)[2:]}",
-                "0xDbde3A019589F121eBFd68cFCBa6f70becD76CC5",
+                wallet,
                 value,
                 min_value,
                 int(time.time()) + 10000)
