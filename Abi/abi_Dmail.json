@@ -1,0 +1,33 @@
+[{
+        "type": "function",
+        "name": "send_mail",
+        "constant": false,
+        "inputs": [
+            {
+                "name": "to",
+                "type": "string",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "string",
+                "_isParamType": true
+            },
+            {
+                "name": "subject",
+                "type": "string",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "string",
+                "_isParamType": true
+            }
+        ],
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "gas": null,
+        "_isFragment": true
+    }
+]

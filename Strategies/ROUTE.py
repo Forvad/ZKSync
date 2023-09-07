@@ -22,6 +22,7 @@ from DEX.MuteSwap import Mute
 from DEX.SpaceFi_Swap import SpaceFi
 from NFT.Tevaera import Tevaera
 from Log.Loging import log, inv_log
+from Message.dmail import message_dmail
 
 
 class FuncZksync:
@@ -137,6 +138,9 @@ class FuncZksync:
             EVM.waiting_coin(self.private_key, 'zksync', wait_token, value)
             time.sleep(EVM.randint_(cng.DEX_SLEEP))
 
+    def dmail_msg(self):
+        message_dmail(self.private_key)
+
 
 class DepositETH:
     def __init__(self, private_key):
@@ -175,23 +179,25 @@ class StuffingTransactions(FuncZksync):
     def creating_path(self):
         name = {'Merkly': self.merkly_tx, 'Wrapped_ETH': self.Wrapped_ETH, 'Domains_Name': self.domains_name,
                 'Deploy_Contract': self.deploy_contract, 'Lending_Protocol': self.lending_protocol, 'DEX': self.dex,
-                'NFT': self.mint_nft}
+                'NFT': self.mint_nft, 'DMAIL': self.dmail_msg}
         list_work = cng.Route.copy()
         if 'DEX' in list_work:
             self.dex()
             list_work.remove('DEX')
-        if 'Lending_protocol' in list_work:
-            if not isinstance(cng.LENDING_AMOUNT, int):
-                cng.LENDING_AMOUNT = 1
-            for _ in range(cng.LENDING_AMOUNT):
-                self.route.append(name['Lending_protocol'])
-            list_work.remove('Lending_protocol')
-        if 'Wrapped_ETH' in list_work:
-            if not isinstance(cng.WRAP_AMOUNT, int):
-                cng.LENDING_AMOUNT = 1
-            for _ in range(cng.LENDING_AMOUNT):
-                self.route.append(name['Wrapped_ETH'])
-            list_work.remove('Wrapped_ETH')
+
+        def multiple_addition(data_: list):
+            if data_[0] in list_work:
+                if not isinstance(data_[1], int):
+                    data_[1] = 1
+                for _ in range(data_[1]):
+                    self.route.append(name[data_[0]])
+                list_work.remove(data_[0])
+
+        add_func = [['Lending_protocol', cng.LENDING_AMOUNT], ['Wrapped_ETH', cng.WRAP_AMOUNT],
+                    ['DMAIL', cng.DMAIL_AMOUNT]]
+        for data in add_func:
+            multiple_addition(data)
+
         for add_name in list_work:
             self.route.append(name[add_name])
         random.shuffle(self.route)

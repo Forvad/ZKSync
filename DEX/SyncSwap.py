@@ -83,7 +83,7 @@ class SyncSwap:
         tx_bool = EVM.sending_tx(web3, tx, 'zksync', self.private_key, self.retry, module_str, add_buy=add_buy,
                                  sell_add=sell_add)
         if not tx_bool:
-            if RETRY < self.retry:
+            if RETRY > self.retry:
                 self.retry += 1
                 time.sleep(15)
                 return self.swap()
@@ -137,4 +137,4 @@ class SyncSwap:
             if RETRY > self.retry:
                 self.retry += 1
                 time.sleep(15)
-                return self.swap()
+                return self.add_liquidity()
