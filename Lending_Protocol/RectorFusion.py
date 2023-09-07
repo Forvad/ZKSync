@@ -56,7 +56,7 @@ class ProtocolRector:
             'nonce': self.web3.eth.get_transaction_count(self.address),
             "gas": 0
         }
-        module_str = f'Deposit | {self.token} | {self.address}'
+        module_str = f'Deposit Fusion Protocol | {self.token} | {self.address}'
         tx_bool = EVM.sending_tx(self.web3, tx, 'zksync', self.private_key, self.retry, module_str, sell_add=self.amount)
         if not tx_bool:
             if RETRY > self.retry:
@@ -83,7 +83,7 @@ class ProtocolRector:
             "gas": 0
         }
         add_buy = self.amount if self.token == 'ETH' else 0
-        module_str = f'Withdraw | {self.token} | {self.address}'
+        module_str = f'Withdraw Fusion Protocol | {self.token} | {self.address}'
         tx_bool = EVM.sending_tx(self.web3, tx, 'zksync', self.private_key, self.retry, module_str, add_buy=add_buy)
         if not tx_bool:
             if RETRY > self.retry:
