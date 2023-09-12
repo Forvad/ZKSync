@@ -75,7 +75,7 @@ class InfoBalance:
             contract = ["0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91", "0xC5db68F30D21cBe0C9Eac7BE5eA83468d69297e6",
                         "0x04e9Db37d8EA0760072e1aCE3F2A219988Fdac29", "0x8B791913eB07C32779a16750e3868aA8495F5964",
                         "0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d", "0x18381c0f738146Fb694DE18D1106BdE2BE040Fa4",
-                        "0x943ac2310D9BC703d6AB5e5e76876e212100f894"]
+                        "0x943ac2310D9BC703d6AB5e5e76876e212100f894", '0xE0B015E54d54fc84a6cB9B666099c46adE9335FF']
             values = 0
             if data_:
                 for data in data_:
@@ -88,7 +88,7 @@ class InfoBalance:
 
         value += cnculate(json_data)
         meta = int(response["meta"]["totalPages"])
-        self.balance.tx = response["meta"]["totalItems"]
+        # self.balance.tx = response["meta"]["totalItems"]
         self.balance.last_date = response["items"][0]["timestamp"].split("T")[0]
         if meta > 1:
             response_2 = get(f'https://block-explorer-api.mainnet.zksync.io/address/{self.address}/'
@@ -103,6 +103,7 @@ class InfoBalance:
         balances, _ = EVM.check_balance(self.address, "zksync", "")
         self.balance.ETH = [round(EVM.DecimalTO(balances, 18), 3), round(EVM.DecimalTO(balances, 18)
                                                                          * self.price_ETH, 3)]
+        self.balance.tx = EVM.web3('zksync').eth.get_transaction_count(self.address)
         time.sleep(1)
         return self.balance
 
@@ -121,8 +122,6 @@ def get_info():
                 'Fee': None, 'Fee$': None, 'Active Contract': None, '*******': None, 'Last date': None}
     address = [InfoBalance.address_acc(adr[0]) for adr in wallet()]
     save_balance = [decorate.copy() for _ in range(len(address))]
-    for i in range(5):
-        save_balance += save_balance
     price_ETH = EVM.prices_network("zksync")
     with Pool(10) as pols:
         all_balance = pols.map(lambda func: InfoBalance(func, price_ETH).get_info_wallet(), address)

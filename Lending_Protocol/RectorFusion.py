@@ -34,7 +34,7 @@ class ProtocolRector:
         module_str = f'Supply Assets | {self.address}'
         tx_bool = EVM.sending_tx(self.web3, tx, 'zksync', self.private_key, self.retry, module_str)
         if not tx_bool:
-            if RETRY < self.retry:
+            if RETRY > self.retry:
                 self.retry += 1
                 time.sleep(15)
                 return self.supply_assets()

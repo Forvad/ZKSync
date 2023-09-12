@@ -4,6 +4,7 @@ from web3 import Web3
 from Contract.Swap_Contract import ContractSync
 from Utils.EVMutils import EVM
 from config import RETRY
+from DEX.Izumi_Swap import Izumi
 
 
 class SpaceFi:
@@ -31,9 +32,11 @@ class SpaceFi:
         value = EVM.DecimalFrom(self.amount, decimal)
         amount_out = contract.functions.getAmountsOut(value, [self.token_address(self.token_from),
                                                               self.token_address(self.token_to)]).call()[1]
-        min_tokens = int(amount_out * (1 - (1 / 100)))
-        print(value, min_tokens, [self.token_address(self.token_from), self.token_address(self.token_to)], wallet)
+        min_tokens = int(amount_out * (1 - (3 / 100)))
+
         if self.token_from != "ETH":
+            EVM.approve(value, self.private_key, "zksync", self.token_address(self.token_from),
+                        "0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d")
             contract_txn = contract.functions.swapExactTokensForETH(
                 value,
                 min_tokens,
@@ -56,9 +59,6 @@ class SpaceFi:
             'nonce': web3.eth.get_transaction_count(wallet),
             "gas": 0
         })
-        if self.token_from != "ETH":
-            EVM.approve(value, self.private_key, "zksync", self.token_address(self.token_from),
-                        "0x8B791913eB07C32779a16750e3868aA8495F5964")
         module_str = f'SpaceFi Swap | {wallet} | {self.token_from} | {self.token_to}'
         add_buy = EVM.DecimalFrom(self.amount / EVM.prices_network("ethereum"), 18) if self.token_to == 'ETH' else 0
         sell_add = value if self.token_from == 'ETH' else 0
@@ -69,3 +69,8 @@ class SpaceFi:
                 self.retry += 1
                 time.sleep(15)
                 return self.swap()
+            else:
+                swaps = Izumi(self.private_key, self.token_from, self.token_to, self.amount)
+                swaps.swap()
+        else:
+            return True

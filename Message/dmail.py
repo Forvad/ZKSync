@@ -11,8 +11,8 @@ def message_dmail(private_key, retry=0):
     web3 = EVM.web3('zksync')
     address = Account.from_key(private_key).address
     contract = web3.eth.contract(address='0x981F198286E40F9979274E0876636E9144B8FB8E', abi=open_abi()['abi_Dmail'])
-    tx = contract.functions.send_mail('0xDbde3A019589F121eBFd68cFCBa6f70becD76CC5@dmail.ai',
-                                      '0xDbde3A019589F121eBFd68cFCBa6f70becD76CC5@dmail.ai').\
+    tx = contract.functions.send_mail(f'{address}@dmail.ai',
+                                      f'{address}@dmail.ai').\
         build_transaction({
                             'from': address,
                             'gasPrice': web3.eth.gas_price,
@@ -24,7 +24,7 @@ def message_dmail(private_key, retry=0):
     if not tx_bool:
         if RETRY > retry:
             time.sleep(15)
-            return message(private_key, retry+1)
+            return message_dmail(private_key, retry+1)
     else:
         return True
 

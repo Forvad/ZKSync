@@ -315,7 +315,7 @@ class EVM:
     def waiting_coin(private_key: str, chain: str, address_coin: str, value: (int, float)) -> None:
         """Waiting for a token on the account"""
         coins_value, decimal = EVM.check_balance(private_key, chain, address_coin)
-        value = EVM.DecimalFrom(value - value * 0.2, decimal)
+        value = EVM.DecimalFrom(value * 0.8, decimal)
         while coins_value < value:
             time.sleep(15)
             try:
@@ -323,3 +323,4 @@ class EVM:
             except BaseException:
                 inv_log().error(f'Eror waiting_coin {chain, address_coin, value}')
                 coins_value = 0
+                time.sleep(10)

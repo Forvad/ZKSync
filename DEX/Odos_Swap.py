@@ -4,8 +4,9 @@ import requests
 from web3 import Web3
 from eth_account import Account
 from Utils.EVMutils import EVM
-from Log.Loging import log
+from Log.Loging import log, inv_log
 from config import RETRY
+from DEX.MuteSwap import Mute
 
 
 class Odos:
@@ -100,13 +101,18 @@ class Odos:
                 add_buy = EVM.DecimalFrom(self.amount / EVM.prices_network("zksync"), 18) if self.token_to == "ETH"\
                     else 0
                 add_sell = tx["value"] if self.token_from == "ETH" else 0
+                tx['gas'] = 0
                 str_modules = f'Odos Swap | {address} | {self.token_from} | {self.token_to}'
+                inv_log().info(f'odos tx: {tx}')
                 tx_bool = EVM.sending_tx(web3, tx, 'zksync', self.private_key, 0, str_modules, add_buy=add_buy, sell_add=add_sell)
                 if not tx_bool:
                     if RETRY > self.retry:
                         self.retry += 1
                         time.sleep(15)
                         return self.swap()
+                    else:
+                        swaps = Mute(self.private_key, self.token_from, self.token_to, self.amount)
+                        swaps.swap()
                 # handle transaction assembly response data
             else:
                 log().error(f"Error in Transaction Assembly: {response.json()}")

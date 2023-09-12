@@ -2,7 +2,7 @@ import random
 import time
 
 from Utils.EVMutils import EVM
-from Exchange.OKX import okx_withdraw
+from Exchange.OKX import okx_withdraw, check_balance
 from Exchange.BitGet import BitGetTr
 import config as cng
 from eth_account import Account
@@ -23,6 +23,8 @@ from DEX.SpaceFi_Swap import SpaceFi
 from NFT.Tevaera import Tevaera
 from Log.Loging import log, inv_log
 from Message.dmail import message_dmail
+from Bridge.Orbiter import transfer_orbiter
+from Bridge.Across import transfer_across
 
 
 class FuncZksync:
@@ -143,13 +145,17 @@ class FuncZksync:
 
 
 class DepositETH:
-    def __init__(self, private_key):
+    def __init__(self, private_key, deposit=0):
         self.private_key = private_key
         self.address = Account.from_key(private_key).address
+        self.deposit = deposit
 
     def withdraw_cex(self):
         if cng.Deposit == "OKX":
-            value = EVM.uniform_(cng.OKX_AMOUNT)
+            if self.deposit:
+                value = self.deposit
+            else:
+                value = EVM.uniform_(cng.OKX_AMOUNT)
             okx_withdraw(cng.OKX_CHAIN, self.address, value)
             for chain in cng.OKX_CHAIN:
                 EVM.waiting_coin(self.private_key, chain, '', value)
@@ -221,22 +227,33 @@ class WithdrawETH:
 
     def withdraw(self):
         if cng.Withdraw:
-            withdrawal_token(self.private_key, self.address_to)
+            if cng.Orbiter or cng.Across:
+                if cng.Orbiter:
+                    transfer_orbiter(self.private_key)
+                elif cng.Across:
+                    transfer_across(self.private_key)
+                time.sleep(EVM.randint_([10, 20]))
+                return withdrawal_token(self.private_key, self.address_to, orbiter_module=True)
+            else:
+                return withdrawal_token(self.private_key, self.address_to)
+        else:
+            return 0
 
 
-def main(private_key: str, address_to: str):
-    deposit = DepositETH(private_key)
+def main(private_key: str, address_to: str, value_deposit=0):
+    deposit = DepositETH(private_key, value_deposit)
     deposit.withdraw()
 
     work = StuffingTransactions(private_key)
     work.start_work()
 
-    time.sleep(EVM.randint_([100, 200]))
+    time.sleep(EVM.randint_([10, 20]))
 
     withdraw = WithdrawETH(private_key, address_to)
-    withdraw.withdraw()
+    withdraw_balance = withdraw.withdraw()
 
     log().success(f'Worked out wallet {withdraw.address}')
+    return withdraw_balance
 
 
 def wallet() -> list:
@@ -244,6 +261,14 @@ def wallet() -> list:
         wallets = file.read().splitlines()
         wallets = [wal.split(';') for wal in wallets]
         return wallets
+
+
+def search_balance(need_balance):
+    balance = 0
+    while balance >= need_balance:
+        time.sleep(15)
+        balance = check_balance('ETH')
+    return need_balance
 
 if __name__ == '__main__':
     pass

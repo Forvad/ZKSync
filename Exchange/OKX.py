@@ -71,6 +71,58 @@ def fee_chain():
         raise BaseException(errors)
 
 
+def transfer_sub(api_key, secret_key, passphras, SYMBOL):
+    try:
+        _, _, headers = okx_data(api_key, secret_key, passphras,
+                                 request_path=f"/api/v5/users/subaccount/list", meth="GET")
+        list_sub = requests.get("https://www.okx.cab/api/v5/users/subaccount/list", timeout=10,
+                                headers=headers)
+        list_sub = list_sub.json()
+
+        for sub_data in list_sub['data']:
+            name_sub = sub_data['subAcct']
+
+            _, _, headers = okx_data(api_key, secret_key, passphras,
+                                     request_path=f"/api/v5/asset/subaccount/balances?subAcct={name_sub}&ccy={SYMBOL}",
+                                     meth="GET")
+            sub_balance = requests.get(
+                f"https://www.okx.cab/api/v5/asset/subaccount/balances?subAcct={name_sub}&ccy={SYMBOL}",
+                timeout=10, headers=headers)
+            sub_balance = sub_balance.json()
+            sub_balance = sub_balance['data'][0]['bal']
+            if float(sub_balance) > 0:
+                log().info(f'{name_sub} | sub_balance : {sub_balance} {SYMBOL}')
+
+                body = {"ccy": f"{SYMBOL}", "amt": str(sub_balance), "from": 6, "to": 6, "type": "2",
+                        "subAcct": name_sub}
+                _, _, headers = okx_data(api_key, secret_key, passphras, request_path=f"/api/v5/asset/transfer",
+                                         body=str(body), meth="POST")
+                requests.post("https://www.okx.cab/api/v5/asset/transfer", data=str(body), timeout=10,
+                              headers=headers)
+            time.sleep(1)
+
+    except Exception as error:
+        inv_log().error(f'{error}')
+
+
+def check_balance(SYMBOL):
+    api_key = cng.OKX_api_key
+    secret_key = cng.OKX_secret_key
+    passphras = cng.OKX_password
+
+    transfer_sub(api_key, secret_key, passphras, SYMBOL)
+
+    _, _, headers = okx_data(api_key, secret_key, passphras,
+                             request_path=f"/api/v5/account/balance?ccy={SYMBOL}")
+    balance = requests.get(f'https://www.okx.cab/api/v5/account/balance?ccy={SYMBOL}', timeout=10,
+                           headers=headers)
+    try:
+        balance = balance.json()
+        return float(balance['data'][0]['details'][0]['cashBal'])
+    except BaseException as errors:
+        log().error(f'error: {errors}, requests: {balance.text}')
+
+
 def okx_withdraw(chains: list, address: str, value: (int, float), retry=0):
     name_chain = {
         "bsc": "BSC",
@@ -91,7 +143,7 @@ def okx_withdraw(chains: list, address: str, value: (int, float), retry=0):
         'fantom': 'FTM',
         'zksync': 'ETH',
         'ethereum': 'ETH'
-                   }
+    }
     random.shuffle(chains)
     fee = fee_chain()
     for chain in chains:
@@ -102,20 +154,46 @@ def okx_withdraw(chains: list, address: str, value: (int, float), retry=0):
         secret_key = cng.OKX_secret_key
         passphras = cng.OKX_password
 
-        # if is_private_key == True:
-        #     wallet = evm_wallet(privatekey)
-        # else:
-        #     wallet = privatekey
-
         try:
             try:
+                try:
+                    _, _, headers = okx_data(api_key, secret_key, passphras,
+                                             request_path=f"/api/v5/users/subaccount/list", meth="GET")
+                    list_sub = requests.get("https://www.okx.cab/api/v5/users/subaccount/list", timeout=10,
+                                            headers=headers)
+                    list_sub = list_sub.json()
+
+                    for sub_data in list_sub['data']:
+                        name_sub = sub_data['subAcct']
+
+                        _, _, headers = okx_data(api_key, secret_key, passphras,
+                                                 request_path=f"/api/v5/asset/subaccount/balances?subAcct={name_sub}&ccy={SYMBOL}",
+                                                 meth="GET")
+                        sub_balance = requests.get(
+                            f"https://www.okx.cab/api/v5/asset/subaccount/balances?subAcct={name_sub}&ccy={SYMBOL}",
+                            timeout=10, headers=headers)
+                        sub_balance = sub_balance.json()
+                        sub_balance = sub_balance['data'][0]['bal']
+                        if float(sub_balance) > 0:
+
+                            log().info(f'{name_sub} | sub_balance : {sub_balance} {SYMBOL}')
+
+                            body = {"ccy": f"{SYMBOL}", "amt": str(sub_balance), "from": 6, "to": 6, "type": "2",
+                                    "subAcct": name_sub}
+                            _, _, headers = okx_data(api_key, secret_key, passphras, request_path=f"/api/v5/asset/transfer",
+                                                     body=str(body), meth="POST")
+                            requests.post("https://www.okx.cab/api/v5/asset/transfer", data=str(body), timeout=10,
+                                          headers=headers)
+                            time.sleep(1)
+
+                except Exception as error:
+                    log().error(f'{error}')
                 _, _, headers = okx_data(api_key, secret_key, passphras,
                                          request_path=f"/api/v5/account/balance?ccy={SYMBOL}")
                 balance = requests.get(f'https://www.okx.cab/api/v5/account/balance?ccy={SYMBOL}', timeout=10,
                                        headers=headers)
                 balance = balance.json()
                 balance = balance["data"][0]["details"][0]["cashBal"]
-                # print(balance)
 
                 if balance != 0:
                     body = {"ccy": f"{SYMBOL}", "amt": float(balance), "from": 18, "to": 6, "type": "0",
@@ -123,7 +201,7 @@ def okx_withdraw(chains: list, address: str, value: (int, float), retry=0):
                             "clientId": "", "loanTrans": "", "omitPosRisk": ""}
                     _, _, headers = okx_data(api_key, secret_key, passphras, request_path=f"/api/v5/asset/transfer",
                                              body=str(body), meth="POST")
-                    a = requests.post("https://www.okx.cab/api/v5/asset/transfer", data=str(body), timeout=10,
+                    requests.post("https://www.okx.cab/api/v5/asset/transfer", data=str(body), timeout=10,
                                       headers=headers)
                     time.sleep(1)
             except Exception:

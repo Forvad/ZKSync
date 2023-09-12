@@ -40,3 +40,7 @@ class OpenContract:
     def ZkBridge(chain):
         contract_address = {"ethereum": "0x32400084C286CF3E17e7B677ea9583e60a000324"}
         return OpenContract.add_contract(chain, contract_address[chain], ABI['abi_ZKbridge'])
+
+    @staticmethod
+    def acrossbridge():
+        return OpenContract.add_contract('zksync', '0xE0B015E54d54fc84a6cB9B666099c46adE9335FF', ABI['abi_Across'])
