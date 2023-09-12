@@ -39,5 +39,5 @@ if __name__ == '__main__':
                  2 - Потоки
     """)
     works = input('Какой модуль крутим: ')
-    func = {1: zksync_tx, 2: zksync_tx_}
-    func[int(works)]()
+    funcs = {1: zksync_tx, 2: zksync_tx_}
+    funcs[int(works)]()
