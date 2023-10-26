@@ -44,3 +44,8 @@ class OpenContract:
     @staticmethod
     def acrossbridge():
         return OpenContract.add_contract('zksync', '0xE0B015E54d54fc84a6cB9B666099c46adE9335FF', ABI['abi_Across'])
+
+    @staticmethod
+    def tevaera():
+        return OpenContract.add_contract('zksync', '0xcAF741840240E6aB1a010D13368C2d15774487D3',
+                                         ABI['abi_Bridge_Tevaera'])
