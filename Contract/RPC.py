@@ -26,9 +26,9 @@ RPC = {
 
     'nova': {'rpc': 'https://zksync.drpc.org', 'scan': 'https://nova.arbiscan.io/tx', 'token': 'ETH',
              'chain_id': 42170},
-    # https://mainnet.era.zksync.io
-    # https://rpc.ankr.com/zksync_era/1b5254e0092947d451d7140fbdef0d879e662f3ce9d97f183f3eb514800d9018
-    'zksync': {'rpc': 'https://mainnet.era.zksync.io', 'scan': 'https://explorer.zksync.io/tx', 'token': 'ETH', 'chain_id': 324},
+
+    'zksync': {'rpc': 'https://rpc.ankr.com/zksync_era/1b5254e0092947d451d7140fbdef0d879e662f3ce9d97f183f3eb514800d9018',
+               'scan': 'https://explorer.zksync.io/tx', 'token': 'ETH', 'chain_id': 324},
 
     'metis': {'rpc': 'https://andromeda.metis.io/?owner=1088', 'scan': 'https://andromeda-explorer.metis.io/tx',
               'token': 'METIS', 'chain_id': 1088},
