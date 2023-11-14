@@ -1,12 +1,13 @@
 from json import load
-from pathlib import Path
-from os import listdir
+from os import listdir, getcwd
 from os.path import isfile, join
+from sys import platform
 
 
 def open_abi(mode='') -> {str: str}:
     try:
-        mypath = Path('/ZKSync/Abi/')
+        add_patch = '/Abi' if platform == "linux" and 'darwin' else '\\Abi'
+        mypath = getcwd() + add_patch
         list_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
         abi_ = {}
         for file in list_files:

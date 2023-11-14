@@ -57,14 +57,17 @@ def checking_last_date(address: str) -> bool:
                        f'transfers?limit=100&page=1', headers=headers).json()
         json_data = response["items"]
         if json_data:
-            time_str = json_data[0]["timestamp"].split(".")[0].replace('T', '-').replace(':', '-')
-            time_list = time_str.split('-')
-            time_list = [int(i)for i in time_list]
-            time_ = datetime.date(time_list[0], time_list[1], time_list[2])
-            range_op = 86400 * Range_Operation
-            need_time = int(time.mktime(time_.timetuple()) + range_op + (3600 * time_list[3] + 60 * time_list[4]
-                                                                         + time_list[5]))
-            return int(time.time()) > need_time
+            time_ = json_data[0]["timestamp"].replace('Z', '').replace('T', ' ')
+            api_time = datetime.datetime.fromisoformat(time_) + datetime.timedelta(days=Range_Operation)
+            return datetime.datetime.now() > api_time
+            # time_str = json_data[0]["timestamp"].split(".")[0].replace('T', '-').replace(':', '-')
+            # time_list = time_str.split('-')
+            # time_list = [int(i)for i in time_list]
+            # time_ = datetime.date(time_list[0], time_list[1], time_list[2])
+            # range_op = 86400 * Range_Operation
+            # need_time = int(time.mktime(time_.timetuple()) + range_op + (3600 * time_list[3] + 60 * time_list[4]
+            #                                                              + time_list[5]))
+            # return int(time.time()) > need_time
         else:
             inv_log().error(f'address: {address}, response: {response}')
             return False
@@ -146,7 +149,7 @@ class WorkAuto(FuncZksync):
                         amount -= 1
                     time.sleep(EVM.randint_([5, 10]))
             else:
-                func = ['Merkly', 'DMAIL', 'DEX']
+                func = ['Merkly']#, 'DMAIL', 'DEX']
                 funcs = func.copy()
                 random.shuffle(funcs)
                 for _ in range(amount):

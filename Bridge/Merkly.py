@@ -9,11 +9,11 @@ from Contract.Bridge_Contract import OpenContract
 from Log.Loging import log, inv_log
 from Utils.EVMutils import EVM
 from Contract.L0_ID import LAYERZERO_CHAINS_ID
-from config import RETRY, CHECK_GASS
-from Contract.RPC import RPC
+from config import RETRY
 
 
 class MerklyBridge:
+    not_chain = ['base', 'kava']
     def __init__(self, privat_key, from_chain, to_chain, amount, retry=0):
         self.retry = retry
         self.privat_key = privat_key
@@ -61,7 +61,7 @@ class MerklyBridge:
                                                                         '0x', adapterParams).call()
                         send_value = EVM.DecimalTO(send_value[0], 18)
                         send_value = round_to(send_value * EVM.prices_network(from_chain))
-                        if send_value < 0.2:
+                        if send_value < 0.2 and to_chain not in MerklyBridge.not_chain:
                             result[from_chain].append(to_chain)
                     except Exception:
                         pass
