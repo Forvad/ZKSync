@@ -149,7 +149,7 @@ class WorkAuto(FuncZksync):
                         amount -= 1
                     time.sleep(EVM.randint_([5, 10]))
             else:
-                func = ['Merkly']#, 'DMAIL', 'DEX']
+                func = ['Merkly', 'DMAIL', 'DEX']
                 funcs = func.copy()
                 random.shuffle(funcs)
                 for _ in range(amount):
@@ -173,7 +173,8 @@ def main():
     while True:
         for key in private:
             address = Account.from_key(key[0]).address
-            if checking_last_date(address):
+            balance, _ = EVM.check_balance(key[0], 'zksync', '')
+            if checking_last_date(address) and  balance > EVM.DecimalFrom(0.0008, 18):
                 if cng.CHECK_GWEI:
                     EVM.check_gwei()
                 work = WorkAuto(key[0])

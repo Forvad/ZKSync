@@ -1,4 +1,4 @@
-import datetime
+
 import random
 import time
 
@@ -10,7 +10,6 @@ from requests import get
 from config import MAX_GAS_CHARGE, GWEI, RETRY, CHECK_GASS
 from Log.Loging import log, inv_log
 from Abi.abi import ABI
-from DateBase.Data import DateBase
 
 
 class AddFee:

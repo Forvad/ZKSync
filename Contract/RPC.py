@@ -20,14 +20,13 @@ RPC = {
 
     'avalanche': {'rpc': 'https://rpc.ankr.com/avalanche/1b5254e0092947d451d7140fbdef0d879e662f3ce9d97f183f3eb5'
                          '14800d9018', 'scan': 'https://snowtrace.io/tx', 'token': 'AVAX', 'chain_id': 43114},
-
     'fantom': {'rpc': 'https://rpc.ankr.com/fantom', 'scan': 'https://ftmscan.com/tx', 'token': 'FTM',
                'chain_id': 250},
 
     'nova': {'rpc': 'https://zksync.drpc.org', 'scan': 'https://nova.arbiscan.io/tx', 'token': 'ETH',
              'chain_id': 42170},
 
-    'zksync': {'rpc': 'https://rpc.ankr.com/zksync_era/1b5254e0092947d451d7140fbdef0d879e662f3ce9d97f183f3eb514800d9018',
+    'zksync': {'rpc': 'https://rpc.ankr.com/zksync_era/8126cf3e7e666fad4416eec84df15a99d44891f3ae42c09af855fa87b3a8c161',
                'scan': 'https://explorer.zksync.io/tx', 'token': 'ETH', 'chain_id': 324},
 
     'metis': {'rpc': 'https://andromeda.metis.io/?owner=1088', 'scan': 'https://andromeda-explorer.metis.io/tx',

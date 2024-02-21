@@ -4,8 +4,6 @@ from web3 import Web3
 from eth_abi import encode
 from Utils.EVMutils import EVM
 import config as cng
-from Contract.RPC import RPC
-from Log.Loging import log
 
 
 class WrapETH:

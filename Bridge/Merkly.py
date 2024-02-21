@@ -54,7 +54,7 @@ class MerklyBridge:
             for to_chain in LAYERZERO_CHAINS_ID.items():
                 to_chain = to_chain[0]
 
-                if from_chain != to_chain:
+                if from_chain != to_chain and to_chain != 'klaytn':
 
                     try:
                         send_value = contract.functions.estimateSendFee(LAYERZERO_CHAINS_ID[to_chain],
@@ -110,31 +110,6 @@ class MerklyBridge:
                     log().info(f'try again | {wallet}')
                     time.sleep(30)
                     return self.bridge()
-            # total_fee = int(contract_txn['gas'] * contract_txn['gasPrice'] + value)
-            # if CHECK_GASS:
-            #     is_fee = EVM.checker_total_fee(self.from_chain, total_fee)
-            #     if not is_fee:
-            #         return self.bridge()
-            #     else:
-            #         contract_txn = EVM.add_gas(web3, contract_txn)
-            # tx_hash = EVM.sign_tx(web3, contract_txn, self.privat_key)
-            # status = EVM.check_status_tx(self.from_chain, tx_hash)
-            # tx_link = f'{RPC[self.from_chain]["scan"]}/{tx_hash}'
-            # if status == 1:
-            #     log(numb).info(module_str)
-            #     log().success(tx_link)
-            #
-            # elif status == 2:
-            #     log().info('Нет ответа, думаем что прошло')
-            #     log().info(module_str)
-            # else:
-            #     log().error(f'{module_str} | tx is failed')
-            #     inv_log().error(f'status 0 -> {to_cain_id, wallet, adapterParams}')
-            #
-            #     self.retry += 1
-            #     if self.retry < RETRY:
-            #         log().info(f'try again | {wallet}')
-            #         return self.bridge()
 
         except Exception as error:
             log().error(f'MERKLY | {self.from_chain} | {self.to_chain} | error')
